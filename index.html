@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Thai Letter Listening</title>
+<title>Thai Alphabet Adventure</title>
 
 <style>
 
@@ -15,1893 +15,941 @@
 body {
     margin: 0;
     font-family: Arial, Tahoma, sans-serif;
-    background: linear-gradient(135deg, #fff5fb, #eef8ff);
-    color: #333;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff7fb,
+            #eef8ff
+        );
+
     min-height: 100vh;
+
+    color: #26324a;
 }
+
+
+/* =========================================
+   MAIN APP
+========================================= */
 
 .app {
-    max-width: 1100px;
+    max-width: 1250px;
     margin: auto;
-    padding: 20px;
+    padding: 25px;
 }
 
-/* HEADER */
+
+/* =========================================
+   HEADER
+========================================= */
 
 .header {
     background: white;
+
     border-radius: 25px;
-    padding: 18px 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+
+    padding: 20px 25px;
+
+    box-shadow:
+        0 7px 25px rgba(0,0,0,0.08);
 
     display: flex;
+
     justify-content: space-between;
+
     align-items: center;
+
+    gap: 20px;
 
     margin-bottom: 18px;
 }
 
 .title {
-    font-size: 30px;
-    font-weight: 800;
+    font-size: 32px;
+    font-weight: 900;
 }
 
 .subtitle {
-    color: #777;
     margin-top: 5px;
-}
-
-.scoreBox {
-    background: #fff1a8;
-    border-radius: 18px;
-    padding: 12px 20px;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-/* STATS */
-
-.stats {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
-.stat {
-    background: white;
-    border-radius: 15px;
-    padding: 10px 18px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
-    font-weight: bold;
-}
-
-/* PROGRESS */
-
-.progressOuter {
-    width: 100%;
-    height: 12px;
-    background: #e5e5e5;
-    border-radius: 20px;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-.progressInner {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #ff82bd, #7fc8ff);
-    transition: width 0.4s ease;
-}
-
-/* GAME */
-
-.gameCard {
-    background: white;
-    border-radius: 30px;
-    padding: 25px;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
-}
-
-.gameLayout {
-    display: grid;
-    grid-template-columns: 1fr 220px;
-    gap: 25px;
-}
-
-/* QUESTION */
-
-.questionArea {
-    text-align: center;
-}
-
-.questionNumber {
+    color: #71809a;
     font-size: 16px;
-    color: #888;
-    margin-bottom: 8px;
 }
 
-.questionText {
-    font-size: 30px;
-    font-weight: 800;
-    margin-bottom: 20px;
-}
 
-/* SOUND BUTTON */
+/* =========================================
+   TIMER AREA
+========================================= */
 
-.listenButton {
-    border: none;
-    background: #665cff;
-    color: white;
-
-    font-size: 20px;
-    font-weight: bold;
-
-    padding: 17px 28px;
-
-    border-radius: 20px;
-
-    cursor: pointer;
-
-    box-shadow: 0 6px 15px rgba(102,92,255,0.25);
-
-    transition: transform 0.15s;
-}
-
-.listenButton:hover {
-    transform: scale(1.04);
-}
-
-.listenButton:active {
-    transform: scale(0.96);
-}
-
-.listenButton.speaking {
-    animation: listeningPulse 0.8s infinite;
-}
-
-/* VOICE WARNING */
-
-.voiceStatus {
-    margin-top: 10px;
-    min-height: 22px;
-    font-size: 14px;
-    color: #888;
-}
-
-.voiceStatus.warning {
-    color: #d87900;
-}
-
-/* CHOICES */
-
-.choices {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 15px;
-
-    margin-top: 25px;
-}
-
-.choice {
-    background: #fafafa;
-
-    border: 4px solid #eeeeee;
-
-    border-radius: 24px;
-
-    padding: 15px 8px;
-
-    min-height: 180px;
-
-    cursor: pointer;
-
-    display: flex;
-    flex-direction: column;
-
-    align-items: center;
-    justify-content: center;
-
-    transition: all 0.18s ease;
-}
-
-.choice:hover {
-    transform: translateY(-5px);
-
-    border-color: #aaa2ff;
-
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-.choice .letter {
-    font-size: 80px;
-    line-height: 1;
-    font-weight: 800;
-}
-
-.choice .word {
-    font-size: 20px;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
-.choice .tinyPic {
-    font-size: 30px;
-    margin-top: 5px;
-}
-
-.choice.correct {
-    background: #e8fff1;
-    border-color: #42c978;
-
-    animation: correctPop 0.45s ease;
-}
-
-.choice.correct .letter {
-    color: #16a85a;
-}
-
-.choice.wrong {
-    background: #fff0f0;
-    border-color: #ff6565;
-
-    animation: shake 0.35s ease;
-}
-
-/* FEEDBACK */
-
-.feedback {
-    min-height: 55px;
-
-    margin-top: 18px;
-
-    font-size: 22px;
-
-    font-weight: bold;
-}
-
-.feedback.good {
-    color: #16a85a;
-}
-
-.feedback.bad {
-    color: #e04b4b;
-}
-
-/* NEXT */
-
-.nextButton {
-    display: none;
-
-    border: none;
-
-    background: #ff78b8;
-
-    color: white;
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    padding: 14px 30px;
-
-    border-radius: 18px;
-
-    cursor: pointer;
-
-    margin: 5px auto 0;
-}
-
-/* AVATAR */
-
-.avatarPanel {
-    background: linear-gradient(
-        180deg,
-        #fff3fa,
-        #eef8ff
-    );
-
-    border-radius: 25px;
-
-    padding: 18px;
+.controls {
 
     display: flex;
 
-    flex-direction: column;
-
-    justify-content: center;
-
     align-items: center;
+
+    gap: 8px;
+
+    flex-wrap: wrap;
+
+    justify-content: flex-end;
+}
+
+.timer {
+
+    background: #f6f5ff;
+
+    border: 2px solid #e5e3ff;
+
+    border-radius: 16px;
+
+    padding: 7px 14px;
 
     text-align: center;
 
-    min-height: 350px;
+    min-width: 100px;
 }
 
-.avatarCircle {
-    width: 145px;
-    height: 145px;
+.timerLabel {
 
-    border-radius: 50%;
+    font-size: 11px;
 
-    background: white;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    font-size: 85px;
-
-    box-shadow:
-        0 10px 25px rgba(0,0,0,0.1);
-
-    margin-bottom: 15px;
-}
-
-.avatarMessage {
-    background: white;
-
-    border-radius: 18px;
-
-    padding: 12px 15px;
-
-    font-size: 17px;
+    color: #777;
 
     font-weight: bold;
 
-    line-height: 1.4;
+    text-transform: uppercase;
 }
 
-.avatarPanel.happy .avatarCircle {
-    animation: avatarHappy 0.5s ease;
-}
+.time {
 
-.avatarPanel.surprised .avatarCircle {
-    animation: avatarSurprise 0.5s ease;
-}
-
-/* STAR */
-
-.burst {
-    position: fixed;
-
-    left: 50%;
-    top: 45%;
-
-    transform: translate(-50%, -50%);
-
-    font-size: 45px;
+    font-size: 25px;
 
     font-weight: 900;
 
-    color: #ffb400;
-
-    z-index: 1000;
-
-    pointer-events: none;
-
-    animation: burst 0.9s ease forwards;
+    font-variant-numeric: tabular-nums;
 }
 
-.star {
-    position: fixed;
 
-    font-size: 28px;
+/* BUTTONS */
 
-    pointer-events: none;
+button {
 
-    z-index: 999;
+    font-family: inherit;
 
-    animation: starFloat 1s ease forwards;
+    cursor: pointer;
+
+    border: none;
 }
 
-/* RESULT */
+.timerButton {
 
-.result {
-    display: none;
+    padding: 10px 13px;
 
-    text-align: center;
-
-    padding: 35px 20px;
-}
-
-.resultEmoji {
-    font-size: 90px;
-}
-
-.result h2 {
-    font-size: 38px;
-    margin: 10px 0;
-}
-
-.finalScore {
-    font-size: 28px;
+    border-radius: 12px;
 
     font-weight: bold;
 
-    margin: 20px 0;
+    min-height: 42px;
+
+    background: #f0f1f5;
+
+    color: #26324a;
 }
 
-.restartButton {
-    border: none;
+.startButton {
+
+    background: #4caf72;
+
+    color: white;
+}
+
+.resetTimer {
+
+    background: #f0f1f5;
+
+}
+
+
+/* SHOW LETTERS */
+
+.showLetters {
 
     background: #665cff;
 
     color: white;
 
-    font-size: 20px;
+    padding: 10px 16px;
+
+    border-radius: 13px;
 
     font-weight: bold;
 
-    padding: 15px 30px;
+    min-height: 42px;
+}
+
+
+/* =========================================
+   INSTRUCTION
+========================================= */
+
+.instruction {
+
+    background: white;
 
     border-radius: 18px;
 
+    padding: 14px 20px;
+
+    margin-bottom: 18px;
+
+    text-align: center;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,0.05);
+}
+
+
+/* =========================================
+   ALPHABET GRID
+========================================= */
+
+.alphabetGrid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(11, 1fr);
+
+    gap: 11px;
+}
+
+
+/* =========================================
+   FLIP CARD
+========================================= */
+
+.flipCard {
+
+    height: 125px;
+
+    perspective: 1000px;
+
     cursor: pointer;
+
+    background: transparent;
+
+    padding: 0;
+
+    transition: transform 0.2s ease;
 }
 
-/* ANIMATIONS */
+.flipCard:hover {
 
-@keyframes correctPop {
+    transform:
+        translateY(-5px);
+}
 
-    0% {
-        transform: scale(1);
-    }
 
-    50% {
-        transform: scale(1.08);
-    }
+/* INNER */
 
-    100% {
-        transform: scale(1);
+.cardInner {
+
+    position: relative;
+
+    width: 100%;
+
+    height: 100%;
+
+    transition:
+        transform 0.6s
+        cubic-bezier(.2,.7,.2,1);
+
+    transform-style: preserve-3d;
+}
+
+
+/* FLIPPED */
+
+.flipCard.flipped
+.cardInner {
+
+    transform:
+        rotateY(180deg);
+}
+
+
+/* =========================================
+   CARD FRONT + BACK
+========================================= */
+
+.cardFace {
+
+    position: absolute;
+
+    width: 100%;
+
+    height: 100%;
+
+    backface-visibility: hidden;
+
+    -webkit-backface-visibility: hidden;
+
+    border-radius: 20px;
+
+    background: white;
+
+    border: 3px solid #e8eaf0;
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,0.08);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-direction: column;
+}
+
+
+/* =========================================
+   FRONT
+========================================= */
+
+.cardFront {
+
+    font-size: 60px;
+
+    font-weight: 900;
+
+    color: #26324a;
+}
+
+
+/* LITTLE TAP INDICATOR */
+
+.tapHint {
+
+    position: absolute;
+
+    bottom: 7px;
+
+    font-size: 10px;
+
+    color: #a0a6b2;
+
+    font-weight: bold;
+}
+
+
+/* =========================================
+   BACK
+========================================= */
+
+.cardBack {
+
+    transform:
+        rotateY(180deg);
+
+    padding: 7px;
+
+    overflow: hidden;
+}
+
+
+/* =========================================
+   ILLUSTRATION
+========================================= */
+
+.picture {
+
+    width: 68px;
+
+    height: 68px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 52px;
+
+    line-height: 1;
+
+    margin-bottom: 3px;
+}
+
+
+/* WORD */
+
+.word {
+
+    font-size: 16px;
+
+    font-weight: 900;
+
+    color: #26324a;
+}
+
+
+/* =========================================
+   BACKGROUND COLORS
+========================================= */
+
+.cardBack {
+
+    background:
+        linear-gradient(
+            145deg,
+            #fff,
+            #f8f8ff
+        );
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1050px) {
+
+    .alphabetGrid {
+
+        grid-template-columns:
+            repeat(8, 1fr);
+
     }
 
 }
 
-@keyframes shake {
 
-    0%,100% {
-        transform: translateX(0);
-    }
-
-    25% {
-        transform: translateX(-8px);
-    }
-
-    75% {
-        transform: translateX(8px);
-    }
-
-}
-
-@keyframes avatarHappy {
-
-    0% {
-        transform: scale(1) rotate(0);
-    }
-
-    40% {
-        transform: scale(1.15) rotate(-8deg);
-    }
-
-    70% {
-        transform: scale(1.1) rotate(8deg);
-    }
-
-    100% {
-        transform: scale(1) rotate(0);
-    }
-
-}
-
-@keyframes avatarSurprise {
-
-    0% {
-        transform: scale(1);
-    }
-
-    40% {
-        transform: scale(1.18);
-    }
-
-    70% {
-        transform: scale(0.95);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-
-}
-
-@keyframes burst {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            translate(-50%, -50%)
-            scale(0.3);
-    }
-
-    30% {
-        opacity: 1;
-
-        transform:
-            translate(-50%, -50%)
-            scale(1.2);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            translate(-50%, -80%)
-            scale(1);
-    }
-
-}
-
-@keyframes starFloat {
-
-    0% {
-        opacity: 1;
-
-        transform:
-            translate(0,0)
-            scale(1);
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            translate(var(--x), var(--y))
-            scale(0.3);
-    }
-
-}
-
-@keyframes listeningPulse {
-
-    0%,100% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-
-}
-
-/* MOBILE */
-
-@media(max-width:750px) {
+@media (max-width: 700px) {
 
     .app {
-        padding: 10px;
+
+        padding: 12px;
+
     }
 
     .header {
-        padding: 15px;
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+    .controls {
+
+        justify-content: center;
+
     }
 
     .title {
-        font-size: 22px;
-    }
 
-    .scoreBox {
-        font-size: 18px;
-        padding: 10px;
-    }
-
-    .gameLayout {
-        grid-template-columns: 1fr;
-    }
-
-    .avatarPanel {
-        order: -1;
-
-        min-height: auto;
-
-        padding: 15px;
-    }
-
-    .avatarCircle {
-        width: 90px;
-        height: 90px;
-
-        font-size: 55px;
-    }
-
-    .avatarMessage {
-        font-size: 15px;
-    }
-
-    .questionText {
         font-size: 25px;
+
     }
 
-    .choices {
+    .alphabetGrid {
+
+        grid-template-columns:
+            repeat(5, 1fr);
+
         gap: 8px;
+
     }
 
-    .choice {
-        min-height: 145px;
+    .flipCard {
 
-        border-radius: 18px;
+        height: 105px;
+
     }
 
-    .choice .letter {
-        font-size: 58px;
+    .cardFront {
+
+        font-size: 45px;
+
     }
 
-    .choice .word {
-        font-size: 16px;
+    .picture {
+
+        font-size: 40px;
+
+        width: 52px;
+
+        height: 52px;
+
     }
 
-    .choice .tinyPic {
-        font-size: 24px;
+    .word {
+
+        font-size: 12px;
+
+    }
+
+}
+
+
+@media (max-width: 420px) {
+
+    .alphabetGrid {
+
+        grid-template-columns:
+            repeat(4, 1fr);
+
+    }
+
+}
+
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .cardInner {
+
+        transition: none;
+
+    }
+
+    .flipCard {
+
+        transition: none;
+
     }
 
 }
 
 </style>
+
 </head>
 
 
 <body>
 
+
 <div class="app">
 
-    <!-- HEADER -->
 
-    <div class="header">
+<!-- ======================================
+     HEADER
+======================================= -->
 
-        <div>
+<div class="header">
 
-            <div class="title">
-                🇹🇭 Thai Letter Listening
-            </div>
+    <div>
 
-            <div class="subtitle">
-                Listen carefully and choose the Thai letter.
-            </div>
-
+        <div class="title">
+            🌈 Thai Alphabet Adventure
         </div>
 
-        <div class="scoreBox">
-            ⭐ <span id="score">0</span>
+        <div class="subtitle">
+            แตะตัวอักษร แล้วค้นพบคำศัพท์!
         </div>
 
     </div>
 
 
-    <!-- STATS -->
-
-    <div class="stats">
-
-        <div class="stat">
-            Question:
-            <span id="questionNumber">1</span>/10
-        </div>
-
-        <div class="stat">
-            Correct:
-            <span id="correctCount">0</span>
-        </div>
-
-    </div>
+    <div class="controls">
 
 
-    <!-- PROGRESS -->
+        <!-- TIMER -->
 
-    <div class="progressOuter">
+        <div class="timer">
 
-        <div
-            class="progressInner"
-            id="progress">
-        </div>
-
-    </div>
-
-
-    <!-- GAME -->
-
-    <div class="gameCard">
-
-        <div
-            class="gameLayout"
-            id="gameLayout"
-        >
-
-            <!-- QUESTION -->
-
-            <div class="questionArea">
-
-                <div class="questionNumber">
-                    👂 Listen carefully
-                </div>
-
-                <div
-                    class="questionText"
-                    id="questionText"
-                >
-                    Which Thai letter did you hear?
-                </div>
-
-
-                <button
-                    class="listenButton"
-                    id="listenButton"
-                    onclick="speakCurrent()"
-                >
-                    🔊 Play Letter Sound
-                </button>
-
-
-                <div
-                    class="voiceStatus"
-                    id="voiceStatus"
-                >
-                    Getting Thai voice ready...
-                </div>
-
-
-                <div
-                    class="choices"
-                    id="choices"
-                ></div>
-
-
-                <div
-                    class="feedback"
-                    id="feedback"
-                ></div>
-
-
-                <button
-                    class="nextButton"
-                    id="nextButton"
-                    onclick="nextQuestion()"
-                >
-                    Next ➜
-                </button>
-
+            <div class="timerLabel">
+                ⏱ Time
             </div>
-
-
-            <!-- AVATAR -->
 
             <div
-                class="avatarPanel"
-                id="avatarPanel"
+                class="time"
+                id="time"
             >
-
-                <div
-                    class="avatarCircle"
-                    id="avatar"
-                >
-                    😊
-                </div>
-
-                <div
-                    class="avatarMessage"
-                    id="avatarMessage"
-                >
-                    Listen carefully! 👂
-                </div>
-
+                00:00
             </div>
 
         </div>
 
 
-        <!-- RESULT -->
-
-        <div
-            class="result"
-            id="result"
+        <button
+            class="timerButton startButton"
+            onclick="startTimer()"
         >
+            ▶ Start
+        </button>
 
-            <div class="resultEmoji">
-                🥳
-            </div>
 
-            <h2>
-                Great Job!
-            </h2>
+        <button
+            class="timerButton"
+            onclick="pauseTimer()"
+        >
+            ⏸ Pause
+        </button>
 
-            <div
-                class="finalScore"
-                id="finalScore"
-            >
-                ⭐ 0 / 100
-            </div>
 
-            <p>
-                You did a great job listening to Thai letters!
-            </p>
+        <button
+            class="timerButton resetTimer"
+            onclick="resetTimer()"
+        >
+            🔄
+        </button>
 
-            <button
-                class="restartButton"
-                onclick="restartGame()"
-            >
-                🔄 Play Again
-            </button>
 
-        </div>
+        <button
+            class="showLetters"
+            onclick="showAllLetters()"
+        >
+            Show Letters
+        </button>
+
 
     </div>
 
 </div>
 
 
+<!-- ======================================
+     INSTRUCTION
+======================================= -->
+
+<div class="instruction">
+
+    👆 Click a letter to flip the card!
+
+    <br>
+
+    <small>
+        Can you recognize all 44 Thai consonants?
+    </small>
+
+</div>
+
+
+<!-- ======================================
+     ALPHABET
+======================================= -->
+
+<div
+    class="alphabetGrid"
+    id="alphabetGrid"
+></div>
+
+
+</div>
+
+
 <script>
 
-/* =====================================================
-   THAI LETTER DATA
-===================================================== */
 
-const thaiLetters = [
-
-    ["ก","ไก่","🐔","กอ ไก่"],
-    ["ข","ไข่","🥚","ขอ ไข่"],
-    ["ฃ","ขวด","🍾","ขอ ขวด"],
-    ["ค","ควาย","🐃","คอ ควาย"],
-    ["ฅ","คน","🧑","คอ คน"],
-    ["ฆ","ระฆัง","🔔","ฆอ ระฆัง"],
-
-    ["ง","งู","🐍","งอ งู"],
-    ["จ","จาน","🍽️","จอ จาน"],
-    ["ฉ","ฉิ่ง","🥁","ฉอ ฉิ่ง"],
-    ["ช","ช้าง","🐘","ชอ ช้าง"],
-    ["ซ","โซ่","⛓️","ซอ โซ่"],
-    ["ฌ","เฌอ","🌳","ฌอ เฌอ"],
-
-    ["ญ","หญิง","👩","ญอ หญิง"],
-    ["ฎ","ชฎา","👑","ฎอ ชฎา"],
-    ["ฏ","ปฏัก","🪄","ฏอ ปฏัก"],
-    ["ฐ","ฐาน","🧱","ฐอ ฐาน"],
-    ["ฑ","มณโฑ","👸","ฑอ มณโฑ"],
-    ["ฒ","ผู้เฒ่า","👴","ฒอ ผู้เฒ่า"],
-
-    ["ณ","เณร","🧒","ณอ เณร"],
-    ["ด","เด็ก","👦","ดอ เด็ก"],
-    ["ต","เต่า","🐢","ตอ เต่า"],
-    ["ถ","ถุง","👜","ถอ ถุง"],
-    ["ท","ทหาร","🪖","ทอ ทหาร"],
-    ["ธ","ธง","🚩","ธอ ธง"],
-
-    ["น","หนู","🐭","นอ หนู"],
-    ["บ","ใบไม้","🍃","บอ ใบไม้"],
-    ["ป","ปลา","🐟","ปอ ปลา"],
-    ["ผ","ผึ้ง","🐝","ผอ ผึ้ง"],
-    ["ฝ","ฝา","🫙","ฝอ ฝา"],
-    ["พ","พาน","🥣","พอ พาน"],
-
-    ["ฟ","ฟัน","🦷","ฟอ ฟัน"],
-    ["ภ","สำเภา","⛵","ภอ สำเภา"],
-    ["ม","ม้า","🐴","มอ ม้า"],
-    ["ย","ยักษ์","👹","ยอ ยักษ์"],
-    ["ร","เรือ","🚤","รอ เรือ"],
-    ["ล","ลิง","🐒","ลอ ลิง"],
-
-    ["ว","แหวน","💍","วอ แหวน"],
-    ["ศ","ศาลา","🏠","ศอ ศาลา"],
-    ["ษ","ฤๅษี","🧙","ษอ ฤๅษี"],
-    ["ส","เสือ","🐯","สอ เสือ"],
-    ["ห","หีบ","📦","หอ หีบ"],
-    ["ฬ","จุฬา","🪁","ฬอ จุฬา"],
-
-    ["อ","อ่าง","🛁","ออ อ่าง"],
-    ["ฮ","นกฮูก","🦉","ฮอ นกฮูก"]
-
-];
-
-
-/* =====================================================
-   QUESTION PROMPTS
-===================================================== */
-
-const questionPrompts = [
-
-    "Which Thai letter did you hear?",
-
-    "Listen and choose the letter.",
-
-    "What letter is that sound?",
-
-    "Which letter makes this sound?",
-
-    "Listen carefully. Find the letter!",
-
-    "Can you hear the correct letter?",
-
-    "Which Thai consonant did you hear?"
-
-];
-
-
-/* =====================================================
-   GAME VARIABLES
-===================================================== */
-
-let questions = [];
-
-let currentIndex = 0;
-
-let score = 0;
-
-let correct = 0;
-
-let answered = false;
-
-let thaiVoice = null;
-
-
-/* =====================================================
-   LOAD BROWSER VOICES
-===================================================== */
-
-function loadThaiVoice() {
-
-    const voices =
-        window.speechSynthesis.getVoices();
-
-
-    /*
-       Look specifically for Thai voices.
-    */
-
-    const thaiVoices =
-        voices.filter(voice => {
-
-            return (
-                voice.lang &&
-                voice.lang.toLowerCase().startsWith("th")
-            );
-
-        });
-
-
-    if (thaiVoices.length > 0) {
-
-        /*
-           Prefer Thai Thailand voice.
-        */
-
-        thaiVoice =
-            thaiVoices.find(
-                voice =>
-                    voice.lang.toLowerCase() === "th-th"
-            ) || thaiVoices[0];
-
-
-        document.getElementById(
-            "voiceStatus"
-        ).textContent =
-            "🇹🇭 Thai voice ready";
-
-
-        document.getElementById(
-            "voiceStatus"
-        ).classList.remove("warning");
-
-    }
-
-    else {
-
-        thaiVoice = null;
-
-        document.getElementById(
-            "voiceStatus"
-        ).textContent =
-            "⚠️ No Thai voice detected. Chrome may need to load its Thai voice.";
-
-        document.getElementById(
-            "voiceStatus"
-        ).classList.add("warning");
-
-    }
-
-}
-
+/* =========================================
+   THAI ALPHABET DATA
+========================================= */
 
 /*
-   Chrome sometimes loads voices AFTER
-   the page has already loaded.
+    picture uses simple child-friendly symbols.
+
+    These can later be replaced with
+    proper illustrated SVG pictures.
 */
 
-if (
-    "speechSynthesis" in window
-) {
-
-    speechSynthesis.onvoiceschanged =
-        loadThaiVoice;
-
-    loadThaiVoice();
-
-}
-
-
-/* =====================================================
-   SHUFFLE
-===================================================== */
-
-function shuffle(array) {
-
-    return array.sort(
-        () => Math.random() - 0.5
-    );
-
-}
-
-
-/* =====================================================
-   START GAME
-===================================================== */
-
-function startGame() {
-
-    questions =
-        shuffle([...thaiLetters])
-        .slice(0,10);
-
-    currentIndex = 0;
-
-    score = 0;
-
-    correct = 0;
-
-    answered = false;
-
-
-    document.getElementById(
-        "score"
-    ).textContent = score;
-
-
-    document.getElementById(
-        "correctCount"
-    ).textContent = correct;
-
-
-    document.getElementById(
-        "result"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "gameLayout"
-    ).style.display = "grid";
-
-
-    renderQuestion();
-
-}
-
-
-/* =====================================================
-   RENDER QUESTION
-===================================================== */
-
-function renderQuestion() {
-
-    answered = false;
-
-
-    const current =
-        questions[currentIndex];
-
-
-    document.getElementById(
-        "questionNumber"
-    ).textContent =
-        currentIndex + 1;
-
-
-    document.getElementById(
-        "progress"
-    ).style.width =
-        ((currentIndex / 10) * 100) + "%";
-
-
-    const prompt =
-        questionPrompts[
-            Math.floor(
-                Math.random() *
-                questionPrompts.length
-            )
-        ];
-
-
-    document.getElementById(
-        "questionText"
-    ).textContent =
-        prompt;
-
-
-    document.getElementById(
-        "feedback"
-    ).textContent = "";
-
-
-    document.getElementById(
-        "feedback"
-    ).className =
-        "feedback";
-
-
-    document.getElementById(
-        "nextButton"
-    ).style.display =
-        "none";
-
-
-    setAvatar(
-        "😊",
-        "Listen carefully! 👂",
-        ""
-    );
-
-
-    /* CREATE THREE CHOICES */
-
-    let choices = [current];
-
-
-    while (choices.length < 3) {
-
-        const random =
-            thaiLetters[
-                Math.floor(
-                    Math.random() *
-                    thaiLetters.length
-                )
-            ];
-
-
-        if (
-            !choices.some(
-                item =>
-                    item[0] === random[0]
-            )
-        ) {
-
-            choices.push(random);
-
-        }
-
-    }
-
-
-    choices =
-        shuffle(choices);
-
-
-    const container =
+const thaiAlphabet = [
+
+    ["ก", "ไก่", "🐔"],
+    ["ข", "ไข่", "🥚"],
+    ["ฃ", "ขวด", "🍾"],
+    ["ค", "ควาย", "🐃"],
+    ["ฅ", "คน", "🧑"],
+    ["ฆ", "ระฆัง", "🔔"],
+
+    ["ง", "งู", "🐍"],
+    ["จ", "จาน", "🍽️"],
+    ["ฉ", "ฉิ่ง", "🥁"],
+    ["ช", "ช้าง", "🐘"],
+    ["ซ", "โซ่", "⛓️"],
+    ["ฌ", "เฌอ", "🌳"],
+
+    ["ญ", "หญิง", "👩"],
+    ["ฎ", "ชฎา", "👑"],
+    ["ฏ", "ปฏัก", "🪄"],
+    ["ฐ", "ฐาน", "🧱"],
+    ["ฑ", "มณโฑ", "👸"],
+    ["ฒ", "ผู้เฒ่า", "👴"],
+
+    ["ณ", "เณร", "🧒"],
+    ["ด", "เด็ก", "👦"],
+    ["ต", "เต่า", "🐢"],
+    ["ถ", "ถุง", "👜"],
+    ["ท", "ทหาร", "🪖"],
+    ["ธ", "ธง", "🚩"],
+
+    ["น", "หนู", "🐭"],
+    ["บ", "ใบไม้", "🍃"],
+    ["ป", "ปลา", "🐟"],
+    ["ผ", "ผึ้ง", "🐝"],
+    ["ฝ", "ฝา", "🫙"],
+    ["พ", "พาน", "🥣"],
+
+    ["ฟ", "ฟัน", "🦷"],
+    ["ภ", "สำเภา", "⛵"],
+    ["ม", "ม้า", "🐴"],
+    ["ย", "ยักษ์", "👹"],
+    ["ร", "เรือ", "🚤"],
+    ["ล", "ลิง", "🐒"],
+
+    ["ว", "แหวน", "💍"],
+    ["ศ", "ศาลา", "🏠"],
+    ["ษ", "ฤๅษี", "🧙"],
+    ["ส", "เสือ", "🐯"],
+    ["ห", "หีบ", "📦"],
+    ["ฬ", "จุฬา", "🪁"],
+
+    ["อ", "อ่าง", "🛁"],
+    ["ฮ", "นกฮูก", "🦉"]
+
+];
+
+
+/* =========================================
+   CREATE CARDS
+========================================= */
+
+function createAlphabet() {
+
+    const grid =
         document.getElementById(
-            "choices"
+            "alphabetGrid"
         );
 
 
-    container.innerHTML = "";
+    thaiAlphabet.forEach(
+        (item, index) => {
 
 
-    choices.forEach(item => {
-
-        const button =
-            document.createElement("div");
-
-
-        button.className =
-            "choice";
+        const card =
+            document.createElement(
+                "button"
+            );
 
 
-        button.dataset.letter =
-            item[0];
+        card.className =
+            "flipCard";
 
 
-        button.innerHTML = `
+        card.type =
+            "button";
 
-            <span class="letter">
-                ${item[0]}
-            </span>
 
-            <span class="word">
-                ${item[1]}
-            </span>
+        card.setAttribute(
+            "aria-label",
+            item[0] + " " + item[1]
+        );
 
-            <span class="tinyPic">
-                ${item[2]}
-            </span>
+
+        card.innerHTML = `
+
+            <div class="cardInner">
+
+
+                <!-- FRONT -->
+
+                <div class="cardFace cardFront">
+
+                    ${item[0]}
+
+                    <div class="tapHint">
+                        TAP ME!
+                    </div>
+
+                </div>
+
+
+                <!-- BACK -->
+
+                <div class="cardFace cardBack">
+
+                    <div class="picture">
+
+                        ${item[2]}
+
+                    </div>
+
+                    <div class="word">
+
+                        ${item[1]}
+
+                    </div>
+
+                </div>
+
+
+            </div>
 
         `;
 
 
-        button.onclick =
-            () => selectAnswer(item);
+        card.addEventListener(
+            "click",
+            function() {
+
+                card.classList.toggle(
+                    "flipped"
+                );
+
+            }
+        );
 
 
-        container.appendChild(button);
+        grid.appendChild(card);
 
     });
 
-
-    /*
-       Automatically play after a short delay.
-       This delay gives Chrome time to finish
-       rendering the question.
-    */
-
-    setTimeout(() => {
-
-        speakCurrent();
-
-    }, 800);
-
 }
 
 
-/* =====================================================
-   SPEAK CURRENT LETTER
-===================================================== */
+/* =========================================
+   SHOW ALL LETTERS
+========================================= */
 
-function speakCurrent() {
+function showAllLetters() {
 
-    if (answered) {
-        return;
-    }
-
-
-    if (
-        !("speechSynthesis" in window)
-    ) {
-
-        alert(
-            "Your browser does not support speech synthesis."
-        );
-
-        return;
-
-    }
-
-
-    const current =
-        questions[currentIndex];
-
-
-    /*
-       Stop anything already speaking.
-    */
-
-    speechSynthesis.cancel();
-
-
-    /*
-       IMPORTANT:
-       We speak the Thai consonant name.
-    */
-
-    const utterance =
-        new SpeechSynthesisUtterance(
-            current[3]
-        );
-
-
-    /*
-       Force Thai language.
-    */
-
-    utterance.lang =
-        "th-TH";
-
-
-    /*
-       Use detected Thai voice.
-    */
-
-    if (thaiVoice) {
-
-        utterance.voice =
-            thaiVoice;
-
-    }
-
-
-    utterance.rate =
-        0.65;
-
-
-    utterance.pitch =
-        1.05;
-
-
-    utterance.volume =
-        1;
-
-
-    const button =
-        document.getElementById(
-            "listenButton"
-        );
-
-
-    utterance.onstart =
-        function() {
-
-            button.classList.add(
-                "speaking"
-            );
-
-            button.textContent =
-                "🔊 Listening...";
-
-        };
-
-
-    utterance.onend =
-        function() {
-
-            button.classList.remove(
-                "speaking"
-            );
-
-            button.textContent =
-                "🔊 Play Letter Sound";
-
-        };
-
-
-    utterance.onerror =
-        function(event) {
-
-            console.log(
-                "Speech error:",
-                event
-            );
-
-
-            button.classList.remove(
-                "speaking"
-            );
-
-            button.textContent =
-                "🔊 Play Letter Sound";
-
-
-            document.getElementById(
-                "voiceStatus"
-            ).textContent =
-                "⚠️ Speech could not play. Try pressing the button.";
-
-            document.getElementById(
-                "voiceStatus"
-            ).classList.add(
-                "warning"
-            );
-
-        };
-
-
-    speechSynthesis.speak(
-        utterance
-    );
-
-}
-
-
-/* =====================================================
-   SELECT ANSWER
-===================================================== */
-
-function selectAnswer(selected) {
-
-    if (answered) {
-        return;
-    }
-
-
-    answered = true;
-
-
-    const current =
-        questions[currentIndex];
-
-
-    const buttons =
+    const cards =
         document.querySelectorAll(
-            ".choice"
+            ".flipCard"
         );
 
 
-    buttons.forEach(button => {
+    cards.forEach(
+        card => {
 
-        if (
-            button.dataset.letter ===
-            current[0]
-        ) {
-
-            button.classList.add(
-                "correct"
+            card.classList.remove(
+                "flipped"
             );
 
         }
-
-    });
-
-
-    /* CORRECT */
-
-    if (
-        selected[0] === current[0]
-    ) {
-
-        score += 10;
-
-        correct++;
-
-
-        document.getElementById(
-            "score"
-        ).textContent =
-            score;
-
-
-        document.getElementById(
-            "correctCount"
-        ).textContent =
-            correct;
-
-
-        document.getElementById(
-            "feedback"
-        ).textContent =
-            "⭐ Great job! That's correct!";
-
-
-        document.getElementById(
-            "feedback"
-        ).className =
-            "feedback good";
-
-
-        setAvatar(
-            "😄",
-            "Great job! ⭐",
-            "happy"
-        );
-
-
-        correctSound();
-
-        starBurst();
-
-    }
-
-
-    /* WRONG */
-
-    else {
-
-        const wrongButton =
-            [...buttons].find(
-                button =>
-                    button.dataset.letter ===
-                    selected[0]
-            );
-
-
-        if (wrongButton) {
-
-            wrongButton.classList.add(
-                "wrong"
-            );
-
-        }
-
-
-        document.getElementById(
-            "feedback"
-        ).textContent =
-            "😮 Not quite! The answer is " +
-            current[0];
-
-
-        document.getElementById(
-            "feedback"
-        ).className =
-            "feedback bad";
-
-
-        setAvatar(
-            "😮",
-            "Oops! Let's listen again. 👂",
-            "surprised"
-        );
-
-
-        wrongSound();
-
-    }
-
-
-    document.getElementById(
-        "nextButton"
-    ).style.display =
-        "block";
-
-
-    document.getElementById(
-        "progress"
-    ).style.width =
-        (((currentIndex + 1) / 10) * 100)
-        + "%";
-
-}
-
-
-/* =====================================================
-   AVATAR
-===================================================== */
-
-function setAvatar(
-    face,
-    message,
-    mood
-) {
-
-    const avatar =
-        document.getElementById(
-            "avatar"
-        );
-
-
-    const panel =
-        document.getElementById(
-            "avatarPanel"
-        );
-
-
-    const text =
-        document.getElementById(
-            "avatarMessage"
-        );
-
-
-    avatar.textContent =
-        face;
-
-
-    text.textContent =
-        message;
-
-
-    panel.classList.remove(
-        "happy",
-        "surprised"
     );
 
-
-    void panel.offsetWidth;
-
-
-    if (mood) {
-
-        panel.classList.add(
-            mood
-        );
-
-    }
-
 }
 
 
-/* =====================================================
-   CORRECT SOUND
-===================================================== */
+/* =========================================
+   TIMER
+========================================= */
 
-function correctSound() {
+let seconds = 0;
 
-    try {
-
-        const audio =
-            new AudioContext();
+let timer = null;
 
 
-        const oscillator =
-            audio.createOscillator();
+function formatTime(totalSeconds) {
+
+    const minutes =
+        Math.floor(
+            totalSeconds / 60
+        )
+        .toString()
+        .padStart(2, "0");
 
 
-        const gain =
-            audio.createGain();
+    const secs =
+        (totalSeconds % 60)
+        .toString()
+        .padStart(2, "0");
 
 
-        oscillator.connect(gain);
-
-        gain.connect(
-            audio.destination
-        );
-
-
-        oscillator.frequency.value =
-            700;
-
-
-        gain.gain.setValueAtTime(
-            0.15,
-            audio.currentTime
-        );
-
-
-        gain.gain.exponentialRampToValueAtTime(
-            0.001,
-            audio.currentTime + 0.5
-        );
-
-
-        oscillator.start();
-
-
-        oscillator.stop(
-            audio.currentTime + 0.5
-        );
-
-    }
-
-    catch(error) {
-
-        console.log(error);
-
-    }
-
-}
-
-
-/* =====================================================
-   WRONG SOUND
-===================================================== */
-
-function wrongSound() {
-
-    try {
-
-        const audio =
-            new AudioContext();
-
-
-        const oscillator =
-            audio.createOscillator();
-
-
-        const gain =
-            audio.createGain();
-
-
-        oscillator.connect(gain);
-
-        gain.connect(
-            audio.destination
-        );
-
-
-        oscillator.frequency.value =
-            220;
-
-
-        gain.gain.setValueAtTime(
-            0.12,
-            audio.currentTime
-        );
-
-
-        gain.gain.exponentialRampToValueAtTime(
-            0.001,
-            audio.currentTime + 0.35
-        );
-
-
-        oscillator.start();
-
-
-        oscillator.stop(
-            audio.currentTime + 0.35
-        );
-
-    }
-
-    catch(error) {
-
-        console.log(error);
-
-    }
-
-}
-
-
-/* =====================================================
-   STAR EFFECT
-===================================================== */
-
-function starBurst() {
-
-    const burst =
-        document.createElement(
-            "div"
-        );
-
-
-    burst.className =
-        "burst";
-
-
-    burst.textContent =
-        "⭐ +10";
-
-
-    document.body.appendChild(
-        burst
+    return (
+        minutes +
+        ":" +
+        secs
     );
 
-
-    setTimeout(() => {
-
-        burst.remove();
-
-    },900);
+}
 
 
-    for (
-        let i = 0;
-        i < 8;
-        i++
-    ) {
+function updateTimer() {
 
-        const star =
-            document.createElement(
-                "div"
-            );
-
-
-        star.className =
-            "star";
-
-
-        star.textContent =
-            "⭐";
-
-
-        star.style.left =
-            (45 + Math.random() * 10)
-            + "%";
-
-
-        star.style.top =
-            (40 + Math.random() * 10)
-            + "%";
-
-
-        star.style.setProperty(
-            "--x",
-            ((Math.random() - 0.5) * 300)
-            + "px"
-        );
-
-
-        star.style.setProperty(
-            "--y",
-            ((Math.random() - 0.5) * 250)
-            + "px"
-        );
-
-
-        document.body.appendChild(
-            star
-        );
-
-
-        setTimeout(() => {
-
-            star.remove();
-
-        },1000);
-
-    }
+    document.getElementById(
+        "time"
+    ).textContent =
+        formatTime(seconds);
 
 }
 
 
-/* =====================================================
-   NEXT QUESTION
-===================================================== */
+function startTimer() {
 
-function nextQuestion() {
-
-    currentIndex++;
-
-
-    if (
-        currentIndex >=
-        questions.length
-    ) {
-
-        finishGame();
+    if (timer !== null) {
 
         return;
 
     }
 
 
-    renderQuestion();
+    timer =
+        setInterval(
+            function() {
+
+                seconds++;
+
+                updateTimer();
+
+            },
+            1000
+        );
 
 }
 
 
-/* =====================================================
-   FINISH
-===================================================== */
+function pauseTimer() {
 
-function finishGame() {
+    if (timer !== null) {
 
-    document.getElementById(
-        "gameLayout"
-    ).style.display =
-        "none";
+        clearInterval(timer);
 
+        timer = null;
 
-    document.getElementById(
-        "result"
-    ).style.display =
-        "block";
-
-
-    document.getElementById(
-        "finalScore"
-    ).textContent =
-        "⭐ " + score + " / 100";
-
-
-    document.getElementById(
-        "progress"
-    ).style.width =
-        "100%";
+    }
 
 }
 
 
-/* =====================================================
-   RESTART
-===================================================== */
+function resetTimer() {
 
-function restartGame() {
+    if (timer !== null) {
 
-    document.getElementById(
-        "gameLayout"
-    ).style.display =
-        "grid";
+        clearInterval(timer);
 
+        timer = null;
 
-    document.getElementById(
-        "result"
-    ).style.display =
-        "none";
+    }
 
 
-    startGame();
+    seconds = 0;
+
+    updateTimer();
 
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+/* =========================================
+   START APP
+========================================= */
 
-startGame();
+createAlphabet();
+
+updateTimer();
+
 
 </script>
 
 </body>
+
 </html>
