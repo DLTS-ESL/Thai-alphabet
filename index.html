@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Thai Letter Listening</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: "Arial", "Tahoma", sans-serif;
+        background: linear-gradient(135deg, #fff7fb, #eef8ff);
+        color: #333;
+        min-height: 100vh;
+    }
+
+    .app {
+        max-width: 1100px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    /* HEADER */
+    .header {
+        background: white;
+        border-radius: 25px;
+        padding: 18px 25px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .title {
+        font-size: 30px;
+        font-weight: 800;
+    }
+
+    .subtitle {
+        color: #777;
+        margin-top: 4px;
+    }
+
+    .scoreBox {
+        background: #fff4b8;
+        border-radius: 18px;
+        padding: 12px 20px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    /* STATS */
+    .stats {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+    }
+
+    .stat {
+        background: white;
+        border-radius: 15px;
+        padding: 10px 18px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+        font-weight: bold;
+    }
+
+    /* PROGRESS */
+    .progressOuter {
+        width: 100%;
+        height: 12px;
+        background: #e8e8e8;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .progressInner {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #ff8fc7, #8ecbff);
+        transition: width 0.4s ease;
+    }
+
+    /* MAIN GAME */
+    .gameCard {
+        background: white;
+        border-radius: 30px;
+        padding: 25px;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    }
+
+    .gameLayout {
+        display: grid;
+        grid-template-columns: 1fr 220px;
+        gap: 25px;
+        align-items: stretch;
+    }
+
+    /* QUESTION */
+    .questionArea {
+        text-align: center;
+    }
+
+    .questionNumber {
+        font-size: 16px;
+        color: #888;
+        margin-bottom: 8px;
+    }
+
+    .questionText {
+        font-size: 30px;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .listenButton {
+        border: none;
+        background: #6c63ff;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 16px 28px;
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 0 6px 15px rgba(108,99,255,0.25);
+        transition: transform 0.15s;
+    }
+
+    .listenButton:hover {
+        transform: scale(1.04);
+    }
+
+    .listenButton:active {
+        transform: scale(0.97);
+    }
+
+    /* CHOICES */
+    .choices {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 28px;
+    }
+
+    .choice {
+        background: #fafafa;
+        border: 4px solid #eeeeee;
+        border-radius: 24px;
+        padding: 15px 8px;
+        min-height: 180px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.18s ease;
+    }
+
+    .choice:hover {
+        transform: translateY(-5px);
+        border-color: #b8b0ff;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .choice .letter {
+        font-size: 80px;
+        line-height: 1;
+        font-weight: 800;
+        color: #333;
+    }
+
+    .choice .word {
+        font-size: 20px;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+
+    .choice .tinyPic {
+        font-size: 30px;
+        margin-top: 6px;
+    }
+
+    .choice.correct {
+        background: #e7fff0;
+        border-color: #42c978;
+        animation: correctPop 0.45s ease;
+    }
+
+    .choice.correct .letter {
+        color: #16a85a;
+    }
+
+    .choice.wrong {
+        background: #fff0f0;
+        border-color: #ff6868;
+        animation: shake 0.35s ease;
+    }
+
+    /* FEEDBACK */
+    .feedback {
+        min-height: 55px;
+        margin-top: 18px;
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .feedback.good {
+        color: #16a85a;
+    }
+
+    .feedback.bad {
+        color: #e04b4b;
+    }
+
+    /* NEXT */
+    .nextButton {
+        display: none;
+        border: none;
+        background: #ff78b8;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 14px 30px;
+        border-radius: 18px;
+        cursor: pointer;
+        margin: 5px auto 0;
+    }
+
+    .nextButton:hover {
+        transform: scale(1.03);
+    }
+
+    /* AVATAR */
+    .avatarPanel {
+        background: linear-gradient(180deg, #fff5fb, #eef8ff);
+        border-radius: 25px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 350px;
+    }
+
+    .avatarCircle {
+        width: 145px;
+        height: 145px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 85px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+
+    .avatarMessage {
+        background: white;
+        border-radius: 18px;
+        padding: 12px 15px;
+        font-size: 17px;
+        font-weight: bold;
+        line-height: 1.4;
+    }
+
+    .avatarPanel.happy .avatarCircle {
+        animation: avatarHappy 0.5s ease;
+    }
+
+    .avatarPanel.surprised .avatarCircle {
+        animation: avatarSurprise 0.5s ease;
+    }
+
+    /* STAR BURST */
+    .burst {
+        position: fixed;
+        left: 50%;
+        top: 45%;
+        transform: translate(-50%, -50%);
+        font-size: 45px;
+        font-weight: 900;
+        color: #ffb400;
+        z-index: 1000;
+        pointer-events: none;
+        animation: burst 0.9s ease forwards;
+    }
+
+    .star {
+        position: fixed;
+        font-size: 28px;
+        pointer-events: none;
+        z-index: 999;
+        animation: starFloat 1s ease forwards;
+    }
+
+    /* RESULT */
+    .result {
+        display: none;
+        text-align: center;
+        padding: 35px 20px;
+    }
+
+    .resultEmoji {
+        font-size: 90px;
+    }
+
+    .result h2 {
+        font-size: 38px;
+        margin: 10px 0;
+    }
+
+    .finalScore {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+    .restartButton {
+        border: none;
+        background: #6c63ff;
+        color: white;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 15px 30px;
+        border-radius: 18px;
+        cursor: pointer;
+    }
+
+    /* ANIMATIONS */
+    @keyframes correctPop {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+        0%,100% { transform: translateX(0); }
+        25% { transform: translateX(-8px); }
+        75% { transform: translateX(8px); }
+    }
+
+    @keyframes avatarHappy {
+        0% { transform: scale(1) rotate(0); }
+        40% { transform: scale(1.15) rotate(-8deg); }
+        70% { transform: scale(1.1) rotate(8deg); }
+        100% { transform: scale(1) rotate(0); }
+    }
+
+    @keyframes avatarSurprise {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.18); }
+        70% { transform: scale(0.95); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes burst {
+        0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.3);
+        }
+        30% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(-50%, -80%) scale(1);
+        }
+    }
+
+    @keyframes starFloat {
+        0% {
+            opacity: 1;
+            transform: translate(0,0) scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform: translate(var(--x), var(--y)) scale(0.3);
+        }
+    }
+
+    /* MOBILE */
+    @media (max-width: 750px) {
+
+        .app {
+            padding: 10px;
+        }
+
+        .header {
+            padding: 15px;
+        }
+
+        .title {
+            font-size: 22px;
+        }
+
+        .scoreBox {
+            font-size: 18px;
+            padding: 10px;
+        }
+
+        .gameLayout {
+            grid-template-columns: 1fr;
+        }
+
+        .avatarPanel {
+            order: -1;
+            min-height: auto;
+            padding: 15px;
+        }
+
+        .avatarCircle {
+            width: 90px;
+            height: 90px;
+            font-size: 55px;
+        }
+
+        .avatarMessage {
+            font-size: 15px;
+        }
+
+        .questionText {
+            font-size: 25px;
+        }
+
+        .choices {
+            gap: 8px;
+        }
+
+        .choice {
+            min-height: 145px;
+            border-radius: 18px;
+        }
+
+        .choice .letter {
+            font-size: 58px;
+        }
+
+        .choice .word {
+            font-size: 16px;
+        }
+
+        .choice .tinyPic {
+            font-size: 24px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div>
+            <div class="title">🇹🇭 Thai Letter Listening</div>
+            <div class="subtitle">
+                Listen carefully and choose the Thai letter.
+            </div>
+        </div>
+
+        <div class="scoreBox">
+            ⭐ <span id="score">0</span>
+        </div>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+
+        <div class="stat">
+            Question:
+            <span id="questionNumber">1</span>/10
+        </div>
+
+        <div class="stat">
+            Correct:
+            <span id="correctCount">0</span>
+        </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progressOuter">
+        <div class="progressInner" id="progress"></div>
+    </div>
+
+
+    <!-- GAME -->
+    <div class="gameCard" id="gameCard">
+
+        <div class="gameLayout">
+
+            <!-- QUESTION SIDE -->
+            <div class="questionArea">
+
+                <div class="questionNumber">
+                    Listen carefully 👂
+                </div>
+
+                <div class="questionText" id="questionText">
+                    Which Thai letter did you hear?
+                </div>
+
+                <button class="listenButton" onclick="speakCurrent()">
+                    🔊 Play Letter Sound
+                </button>
+
+                <div class="choices" id="choices"></div>
+
+                <div class="feedback" id="feedback"></div>
+
+                <button
+                    class="nextButton"
+                    id="nextButton"
+                    onclick="nextQuestion()">
+                    Next ➜
+                </button>
+
+            </div>
+
+
+            <!-- AVATAR -->
+            <div class="avatarPanel" id="avatarPanel">
+
+                <div class="avatarCircle" id="avatar">
+                    😊
+                </div>
+
+                <div class="avatarMessage" id="avatarMessage">
+                    Listen carefully! 👂
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- RESULT -->
+        <div class="result" id="result">
+
+            <div class="resultEmoji">
+                🥳
+            </div>
+
+            <h2>Great Job!</h2>
+
+            <div class="finalScore" id="finalScore">
+                ⭐ 0 / 100
+            </div>
+
+            <p>
+                You did a great job listening to the Thai letters!
+            </p>
+
+            <button class="restartButton" onclick="restartGame()">
+                🔄 Play Again
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   THAI LETTER DATA
+========================================= */
+
+const thaiLetters = [
+
+    ["ก","ไก่","🐔","กอ ไก่"],
+    ["ข","ไข่","🥚","ขอ ไข่"],
+    ["ฃ","ขวด","🍾","ขอ ขวด"],
+    ["ค","ควาย","🐃","คอ ควาย"],
+    ["ฅ","คน","🧑","คอ คน"],
+    ["ฆ","ระฆัง","🔔","ฆอ ระฆัง"],
+
+    ["ง","งู","🐍","งอ งู"],
+    ["จ","จาน","🍽️","จอ จาน"],
+    ["ฉ","ฉิ่ง","🥁","ฉอ ฉิ่ง"],
+    ["ช","ช้าง","🐘","ชอ ช้าง"],
+    ["ซ","โซ่","⛓️","ซอ โซ่"],
+    ["ฌ","เฌอ","🌳","ฌอ เฌอ"],
+
+    ["ญ","หญิง","👩","ญอ หญิง"],
+    ["ฎ","ชฎา","👑","ฎอ ชฎา"],
+    ["ฏ","ปฏัก","🪄","ฏอ ปฏัก"],
+    ["ฐ","ฐาน","🧱","ฐอ ฐาน"],
+    ["ฑ","มณโฑ","👸","ฑอ มณโฑ"],
+    ["ฒ","ผู้เฒ่า","👴","ฒอ ผู้เฒ่า"],
+
+    ["ณ","เณร","🧒","ณอ เณร"],
+    ["ด","เด็ก","👦","ดอ เด็ก"],
+    ["ต","เต่า","🐢","ตอ เต่า"],
+    ["ถ","ถุง","👜","ถอ ถุง"],
+    ["ท","ทหาร","🪖","ทอ ทหาร"],
+    ["ธ","ธง","🚩","ธอ ธง"],
+
+    ["น","หนู","🐭","นอ หนู"],
+    ["บ","ใบไม้","🍃","บอ ใบไม้"],
+    ["ป","ปลา","🐟","ปอ ปลา"],
+    ["ผ","ผึ้ง","🐝","ผอ ผึ้ง"],
+    ["ฝ","ฝา","🫙","ฝอ ฝา"],
+    ["พ","พาน","🥣","พอ พาน"],
+
+    ["ฟ","ฟัน","🦷","ฟอ ฟัน"],
+    ["ภ","สำเภา","⛵","ภอ สำเภา"],
+    ["ม","ม้า","🐴","มอ ม้า"],
+    ["ย","ยักษ์","👹","ยอ ยักษ์"],
+    ["ร","เรือ","🚤","รอ เรือ"],
+    ["ล","ลิง","🐒","ลอ ลิง"],
+
+    ["ว","แหวน","💍","วอ แหวน"],
+    ["ศ","ศาลา","🏠","ศอ ศาลา"],
+    ["ษ","ฤๅษี","🧙","ษอ ฤๅษี"],
+    ["ส","เสือ","🐯","สอ เสือ"],
+    ["ห","หีบ","📦","หอ หีบ"],
+    ["ฬ","จุฬา","🪁","ฬอ จุฬา"],
+
+    ["อ","อ่าง","🛁","ออ อ่าง"],
+    ["ฮ","นกฮูก","🦉","ฮอ นกฮูก"]
+
+];
+
+
+/* =========================================
+   QUESTION PROMPTS
+========================================= */
+
+const questionPrompts = [
+
+    "Which Thai letter did you hear?",
+
+    "Listen and choose the letter.",
+
+    "What letter is that sound?",
+
+    "Which letter makes this sound?",
+
+    "Listen carefully. Find the letter!",
+
+    "Can you hear the correct letter?",
+
+    "Which Thai consonant did you hear?"
+
+];
+
+
+/* =========================================
+   GAME VARIABLES
+========================================= */
+
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let correct = 0;
+let answered = false;
+
+
+/* =========================================
+   SHUFFLE
+========================================= */
+
+function shuffle(array) {
+
+    return array.sort(() => Math.random() - 0.5);
+
+}
+
+
+/* =========================================
+   START GAME
+========================================= */
+
+function startGame() {
+
+    questions = shuffle([...thaiLetters]).slice(0, 10);
+
+    currentIndex = 0;
+    score = 0;
+    correct = 0;
+    answered = false;
+
+    document.getElementById("score").textContent = score;
+    document.getElementById("correctCount").textContent = correct;
+
+    document.getElementById("result").style.display = "none";
+
+    document.querySelector(".gameLayout").style.display = "grid";
+
+    renderQuestion();
+
+}
+
+
+/* =========================================
+   RENDER QUESTION
+========================================= */
+
+function renderQuestion() {
+
+    answered = false;
+
+    const current = questions[currentIndex];
+
+    document.getElementById("questionNumber").textContent =
+        currentIndex + 1;
+
+    document.getElementById("progress").style.width =
+        ((currentIndex) / 10 * 100) + "%";
+
+
+    /* Random question text */
+
+    const prompt =
+        questionPrompts[
+            Math.floor(Math.random() * questionPrompts.length)
+        ];
+
+    document.getElementById("questionText").textContent = prompt;
+
+
+    /* Reset feedback */
+
+    const feedback =
+        document.getElementById("feedback");
+
+    feedback.textContent = "";
+    feedback.className = "feedback";
+
+
+    /* Hide next */
+
+    document.getElementById("nextButton").style.display = "none";
+
+
+    /* Reset avatar */
+
+    setAvatar(
+        "😊",
+        "Listen carefully! 👂",
+        ""
+    );
+
+
+    /* Create choices */
+
+    let choices = [current];
+
+
+    while (choices.length < 3) {
+
+        const random =
+            thaiLetters[
+                Math.floor(Math.random() * thaiLetters.length)
+            ];
+
+        if (
+            !choices.some(
+                item => item[0] === random[0]
+            )
+        ) {
+
+            choices.push(random);
+
+        }
+
+    }
+
+
+    choices = shuffle(choices);
+
+
+    const choicesContainer =
+        document.getElementById("choices");
+
+    choicesContainer.innerHTML = "";
+
+
+    choices.forEach(item => {
+
+        const button =
+            document.createElement("div");
+
+        button.className = "choice";
+
+        button.dataset.letter = item[0];
+
+        button.innerHTML = `
+
+            <span class="letter">
+                ${item[0]}
+            </span>
+
+            <span class="word">
+                ${item[1]}
+            </span>
+
+            <span class="tinyPic">
+                ${item[2]}
+            </span>
+
+        `;
+
+        button.onclick = () =>
+            selectAnswer(item);
+
+        choicesContainer.appendChild(button);
+
+    });
+
+
+    /* Automatically play sound */
+
+    setTimeout(() => {
+
+        speakCurrent();
+
+    }, 500);
+
+}
+
+
+/* =========================================
+   SPEAK LETTER
+========================================= */
+
+function speakCurrent() {
+
+    if (answered) return;
+
+    const current = questions[currentIndex];
+
+    window.speechSynthesis.cancel();
+
+    const speech =
+        new SpeechSynthesisUtterance(current[3]);
+
+    speech.lang = "th-TH";
+    speech.rate = 0.72;
+    speech.pitch = 1.05;
+    speech.volume = 1;
+
+    window.speechSynthesis.speak(speech);
+
+}
+
+
+/* =========================================
+   SELECT ANSWER
+========================================= */
+
+function selectAnswer(selected) {
+
+    if (answered) return;
+
+    answered = true;
+
+
+    const current =
+        questions[currentIndex];
+
+
+    const choiceButtons =
+        document.querySelectorAll(".choice");
+
+
+    choiceButtons.forEach(button => {
+
+        if (
+            button.dataset.letter === current[0]
+        ) {
+
+            button.classList.add("correct");
+
+        }
+
+    });
+
+
+    if (selected[0] === current[0]) {
+
+        /* CORRECT */
+
+        score += 10;
+        correct++;
+
+        document.getElementById("score").textContent =
+            score;
+
+        document.getElementById("correctCount").textContent =
+            correct;
+
+
+        document.getElementById("feedback").textContent =
+            "⭐ Great job! That's correct!";
+
+        document.getElementById("feedback").className =
+            "feedback good";
+
+
+        setAvatar(
+            "😄",
+            "Great job! ⭐",
+            "happy"
+        );
+
+
+        correctSound();
+
+        starBurst();
+
+
+    } else {
+
+        /* INCORRECT */
+
+        const selectedButton =
+            [...choiceButtons].find(
+                button =>
+                    button.dataset.letter === selected[0]
+            );
+
+        if (selectedButton) {
+
+            selectedButton.classList.add("wrong");
+
+        }
+
+
+        document.getElementById("feedback").textContent =
+            "😮 Not quite! The answer is " + current[0];
+
+        document.getElementById("feedback").className =
+            "feedback bad";
+
+
+        setAvatar(
+            "😮",
+            "Oops! Let's listen again. 👂",
+            "surprised"
+        );
+
+
+        wrongSound();
+
+    }
+
+
+    document.getElementById("nextButton").style.display =
+        "block";
+
+
+    document.getElementById("progress").style.width =
+        (((currentIndex + 1) / 10) * 100) + "%";
+
+}
+
+
+/* =========================================
+   AVATAR
+========================================= */
+
+function setAvatar(face, message, mood) {
+
+    const avatar =
+        document.getElementById("avatar");
+
+    const panel =
+        document.getElementById("avatarPanel");
+
+    const text =
+        document.getElementById("avatarMessage");
+
+
+    avatar.textContent = face;
+
+    text.textContent = message;
+
+    panel.classList.remove(
+        "happy",
+        "surprised"
+    );
+
+
+    /* Force animation to restart */
+
+    void panel.offsetWidth;
+
+
+    if (mood) {
+
+        panel.classList.add(mood);
+
+    }
+
+}
+
+
+/* =========================================
+   CORRECT SOUND
+========================================= */
+
+function correctSound() {
+
+    const audio =
+        new AudioContext();
+
+    const oscillator =
+        audio.createOscillator();
+
+    const gain =
+        audio.createGain();
+
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+
+
+    oscillator.frequency.value = 700;
+
+    gain.gain.setValueAtTime(
+        0.15,
+        audio.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audio.currentTime + 0.5
+    );
+
+
+    oscillator.start();
+
+    oscillator.stop(
+        audio.currentTime + 0.5
+    );
+
+}
+
+
+/* =========================================
+   WRONG SOUND
+========================================= */
+
+function wrongSound() {
+
+    const audio =
+        new AudioContext();
+
+    const oscillator =
+        audio.createOscillator();
+
+    const gain =
+        audio.createGain();
+
+
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+
+
+    oscillator.frequency.value = 220;
+
+    gain.gain.setValueAtTime(
+        0.12,
+        audio.currentTime
+    );
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audio.currentTime + 0.35
+    );
+
+
+    oscillator.start();
+
+    oscillator.stop(
+        audio.currentTime + 0.35
+    );
+
+}
+
+
+/* =========================================
+   STAR EFFECT
+========================================= */
+
+function starBurst() {
+
+    const burst =
+        document.createElement("div");
+
+    burst.className = "burst";
+
+    burst.textContent = "⭐ +10";
+
+    document.body.appendChild(burst);
+
+
+    setTimeout(() => {
+
+        burst.remove();
+
+    }, 900);
+
+
+    for (let i = 0; i < 8; i++) {
+
+        const star =
+            document.createElement("div");
+
+        star.className = "star";
+
+        star.textContent = "⭐";
+
+
+        star.style.left =
+            (45 + Math.random() * 10) + "%";
+
+        star.style.top =
+            (40 + Math.random() * 10) + "%";
+
+
+        star.style.setProperty(
+            "--x",
+            ((Math.random() - 0.5) * 300) + "px"
+        );
+
+        star.style.setProperty(
+            "--y",
+            ((Math.random() - 0.5) * 250) + "px"
+        );
+
+
+        document.body.appendChild(star);
+
+
+        setTimeout(() => {
+
+            star.remove();
+
+        }, 1000);
+
+    }
+
+}
+
+
+/* =========================================
+   NEXT QUESTION
+========================================= */
+
+function nextQuestion() {
+
+    currentIndex++;
+
+
+    if (currentIndex >= questions.length) {
+
+        finishGame();
+
+        return;
+
+    }
+
+
+    renderQuestion();
+
+}
+
+
+/* =========================================
+   FINISH
+========================================= */
+
+function finishGame() {
+
+    document.querySelector(".gameLayout").style.display =
+        "none";
+
+    document.getElementById("result").style.display =
+        "block";
+
+
+    document.getElementById("finalScore").textContent =
+        "⭐ " + score + " / 100";
+
+
+    document.getElementById("progress").style.width =
+        "100%";
+
+
+    setAvatar(
+        "🥳",
+        "You did it!",
+        "happy"
+    );
+
+}
+
+
+/* =========================================
+   RESTART
+========================================= */
+
+function restartGame() {
+
+    document.querySelector(".gameLayout").style.display =
+        "grid";
+
+    document.getElementById("result").style.display =
+        "none";
+
+    startGame();
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+startGame();
+
+</script>
+
+</body>
+</html>
